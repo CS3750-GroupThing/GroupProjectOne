@@ -3,4 +3,8 @@ No it isn't.
 
 Yes it is
 
+<<<<<<< HEAD
 Aarons change
+=======
+Okay fine.
+>>>>>>> df49c2faed78676164d8d7abc6397d71ac786beb
