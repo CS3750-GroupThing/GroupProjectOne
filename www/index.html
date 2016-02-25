@@ -5,19 +5,16 @@
 hel {
 	font-size: 2.5em; /* 40px/16=2.5em */
 }
-
 her {
 	font-size: 2.5em; /* 40px/16=2.5em */
 	position: absolute;
 	right: 10px;
 
 }
-
 a {
   color: black;
   text-decoration: none; /* no underline */
 }
-
 </style>
 <title>Todo list</title>
 </head>
@@ -37,7 +34,7 @@ a {
     db.transaction(queryDB, errorCB);
 
     // Populate the database 
-    //
+    // Only used to create the initial local tables.  Create these same tables on whatever MySQL database we use to make it easier to sync.
     function populateDB(tx) {
          /*tx.executeSql('DROP TABLE IF EXISTS todo_Users');
          tx.executeSql('DROP TABLE IF EXISTS todo_Items');*/
@@ -47,6 +44,14 @@ a {
          /*tx.executeSql('INSERT INTO todo_Items (ownerid, completed, description) VALUES ("Aaron", 0, "Mow the lawn")');*/
 
     }
+	function addTodo()
+	{
+		var todoDesc = prompt("What do you need to do?");
+		if (todoDesc != null) {
+			db.transaction( function(tx){ addToDB(tx, todoDesc) }, errorCB );
+			/* Insert into DB */
+		}
+	}
 	
     function addToDB(tx, description) {
 		var owner = "Aaron";
@@ -72,7 +77,6 @@ a {
 		db.transaction( function(tx){ tx.executeSql("DELETE FROM todo_Items WHERE id=" + todoID); }, errorCB );
 	    db.transaction(queryDB, errorCB);
     }
-	
 	
     // Transaction error callback
     //
@@ -130,12 +134,6 @@ a {
 	    }
 
 	}
-
-	function removeTodo(todoID)
-	{
-		db.transaction( function(tx){ removeItemFromDB(tx, todoID) }, errorCB );
-
-	}
 	
 	function clearTable()
 	{
@@ -146,15 +144,6 @@ a {
 		    table.deleteRow(tableHeaderRowCount);
 		}
 	}
-
-	function addTodo()
-	{
-		var todoDesc = prompt("What do you need to do?");
-		if (todoDesc != null) {
-			db.transaction( function(tx){ addToDB(tx, todoDesc) }, errorCB );
-			/* Insert into DB */
-		}
-	}
 	function completeToDo(todoID)
 	{		
 		db.transaction( function(tx){ completeItemInDB(tx, todoID) }, errorCB );
@@ -162,6 +151,10 @@ a {
 	function uncompleteToDo(todoID)
 	{		
 		db.transaction( function(tx){ uncompleteItemInDB(tx, todoID) }, errorCB );
+	}
+	function removeTodo(todoID)
+	{
+		db.transaction( function(tx){ removeItemFromDB(tx, todoID) }, errorCB );
 	}
     </script>
 </body>
