@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+hel {
+	font-size: 2.5em; /* 40px/16=2.5em */
+}
+
+her {
+	font-size: 2.5em; /* 40px/16=2.5em */
+	position: absolute;
+	right: 10px;
+
+}
+
+
+a {
+  color: black;
+  text-decoration: none; /* no underline */
+}
+
+</style>
+<title>Todo list</title>
+</head>
+<body>
+
+<hel>Todo List</hel>&nbsp;<her><a id="addLink" href=javascript:void(0)' onclick='addTodo();'>&#x2710;</a></her>
+<hr/>
+<table id="todoTable">
+
+</table>
+<script type="text/javascript" charset="utf-8" src="js\phonegap.js"></script>
+<script type="text/javascript" charset="utf-8">
+
+    // Wait for PhoneGap to load
+    //
+    /*document.addEventListener("deviceready", onDeviceReady, false);*/
+
+    // PhoneGap is ready
+    //
+    var db = window.openDatabase("Database", "1.0", "todo", 200000);
+    db.transaction(populateDB, errorCB, successCB);
+
+    db.transaction(queryDB, errorCB);
+
+    // Populate the database 
+    //
+    function populateDB(tx) {
+         tx.executeSql('DROP TABLE IF EXISTS todo_Users');
+         tx.executeSql('DROP TABLE IF EXISTS todo_Items');
+         tx.executeSql('CREATE TABLE IF NOT EXISTS todo_Users (username, password)');
+         tx.executeSql('CREATE TABLE IF NOT EXISTS todo_Items (id AUTO_INCREMENT, owner, completed, description)');
+         tx.executeSql('INSERT INTO todo_Users (username, password) VALUES ("Aaron", "1234")');
+         tx.executeSql('INSERT INTO todo_Items (owner, completed, description) VALUES ("Aaron", 0, "Mow the lawn")');
+
+    }
+	
+    // Transaction error callback
+    //
+    function errorCB(tx, err) {
+        alert("Error processing SQL: "+err);
+    }
+
+    // Transaction success callback
+    //
+    function successCB() {
+        alert("Success!");
+    }
+    
+    function queryDB(tx) {
+    	tx.executeSql('SELECT * FROM todo_Items', [], drawTable, errorCB);
+	}
+
+	function drawTable(tx, results) {
+    	var len = results.rows.length;
+		alert("Todo item count: " + len);
+		for (var i=0; i<len; i++){
+	    	/*alert("Row = " + i + " Owner = " + results.rows.item(i).owner + " Completed =  " + results.rows.item(i).completed + " Description =  " + results.rows.item(i).description);*/
+	    	var table = document.getElementById("todoTable");
+			table.style.width = '100%';
+			var header = table.createTHead();
+			var row = header.insertRow(0);
+			var todoID = results.rows.item(i).id;
+			var todoComplete = results.rows.item(i).completed;
+			var todoDesc = results.rows.item(i).description;
+			var cell0 = row.insertCell(0);
+			var cell1 = row.insertCell(1);
+			var cell2 = row.insertCell(2);
+			cell0.style.borderBottom = "thin solid #d3d3d3";
+			cell1.style.borderBottom = "thin solid #d3d3d3";
+			cell2.style.borderBottom = "thin solid #d3d3d3";
+			cell0.innerHTML = todoDesc;
+			cell0.style.fontSize = "22px";
+			if (todoComplete == 1)
+			{
+				cell0.style.setProperty("text-decoration", "line-through");
+				cell0.style.setProperty("color", "green");
+				cell1.innerHTML = "<a href='javascript:void(0)' onclick='uncompleteTodo(" + todoID + ")'><img src='img\\undo_icon.png'></a>";
+			} else {
+				cell1.innerHTML = "<a href='javascript:void(0)' onclick='completeTodo(" + todoID + ")'><img src='img\\checkmark_icon.png'></a>";
+				cell0.style.setProperty("color", "red");
+			}
+
+			cell0.style.width = '100%';
+			cell1.style.fontSize = "28px";
+			cell1.style.width = "50px";
+			cell2.innerHTML = "<a href='javascript:void(0)' onclick='removeTodo(" + todoID + ")'><img src='img\\trash_icon.png'></a>";
+			cell2.style.fontSize = "28px";
+			cell2.style.width = "50px";
+	    }
+
+	}
+	function completeTodo(todoID)
+	{
+		alert("Marking ID: " + todoID + " as Complete");
+		/* var Query = "UPDATE todo SET complete=1 WHERE todoID=" + todoID;*/
+		drawTable();
+	}
+	function uncompleteTodo(todoID)
+	{
+		alert("Marking ID: " + todoID + " as not complete");
+		/* var Query = "UPDATE todo SET complete=1 WHERE todoID=" + todoID;*/
+		drawTable();
+	}
+
+	function removeTodo(todoID)
+	{
+		/*alert("Removing ID: " + todoID);*/
+		if (confirm('Remove this task?')) {
+			// Yes
+			/* var Query = "DELETE FROM todo WHERE todoID=todoID;*/
+			drawTable();
+		} else {
+			// Do nothing!
+		}
+	}
+	
+
+	function addTodo()
+	{
+		var todoDesc = prompt("What do you need to do?");
+		if (todoDesc != null) {
+			var addItem = new Array();
+			db.transaction(addtoDB, errorCB, successCB);	
+			drawTable();
+			/* Insert into DB */
+		}
+	}
+    </script>
+</body>
+</html> 
