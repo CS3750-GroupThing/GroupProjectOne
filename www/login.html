@@ -35,7 +35,7 @@ a {
   <input type="reset" value="Cancel"/>
 </form>
 
-<script language="javascript">
+<?php
 var crypt = require('crypt3'),
     pass = form.password.value,
     hash = '$6$rounds=1234$56abadac833a5$fQIaUG/da/KqlJc5DzCIym/PL.ZhEdw5VOZsw7mofkm.3aE2rZ/rjDCczymRbj1V3rF6lzJO7DR1WOd2ZnC6O.';
@@ -45,6 +45,10 @@ function hash_is_valid(pass, hash) {
 }
 
 console.log(hash_is_valid(pass, hash)); // true
+?>
+
+<script language="javascript">
+
 
 function check(form)/*function to check username & password*/
 {
