@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="functions.js"></script>
+<script src="sha512.js"></script>
 <style>
 hel {
 	font-size: 2.5em; /* 40px/16=2.5em */
@@ -19,12 +21,14 @@ a {
   text-decoration: none; /* no underline */
 }
 
+
+
 </style>
 <title>Login</title>
 </head>
 <body>
 
-<form action="demo_form.asp">
+<form action="login_form.asp">
   Username: <input type="text" name="username"><br/><br/>
   Password: <input type="text" name="password"><br/><br/>
   <input type="button" onclick="check(this.form)" value="Login"/>
@@ -32,10 +36,21 @@ a {
 </form>
 
 <script language="javascript">
+var crypt = require('crypt3'),
+    pass = form.password.value,
+    hash = '$6$rounds=1234$56abadac833a5$fQIaUG/da/KqlJc5DzCIym/PL.ZhEdw5VOZsw7mofkm.3aE2rZ/rjDCczymRbj1V3rF6lzJO7DR1WOd2ZnC6O.';
+
+function hash_is_valid(pass, hash) {
+  return hash === crypt(pass, hash);
+}
+
+console.log(hash_is_valid(pass, hash)); // true
+
 function check(form)/*function to check username & password*/
 {
  /*checkes whether the entered userid and password are matching*/
- if(form.username.value == "checkserveruserid" && form.pswrd.value == "checkserverpswrd")
+ 
+ if(form.username.value == "checkserveruserid" && form.password.value == "checkserverpswrd")
   {
     window.open('index.html')/*opens tasks list while Id & password matches*/
   }
