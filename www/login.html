@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="functions.js"></script>
-<script src="sha512.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+<script src="js/phonegap.js"></script>
+<script src="js/sha512.js"></script>
 <style>
 hel {
 	font-size: 2.5em; /* 40px/16=2.5em */
@@ -21,9 +22,54 @@ a {
   text-decoration: none; /* no underline */
 }
 
-
-
 </style>
+
+<script type="text/javascript">
+$(document).ready(function()
+{
+	function check(form)/*function to check username & password*/
+	{
+	 /*checkes whether the entered userid and password are matching*/
+		var pass = document.getElementById('password');
+		var user = document.getElementById('username');
+		var hash = SHA512(pass);
+		var isEqual = tx.executeSql("COUNT (password) FROM todo_Users WHERE username ='" + user + "' AND password = '" + hash + "'");
+		alert("3");
+		
+		//'$6$rounds=1234$56abadac833a5$fQIaUG/da/KqlJc5DzCIym/PL.ZhEdw5VOZsw7mofkm.3aE2rZ/rjDCczymRbj1V3rF6lzJO7DR1WOd2ZnC6O.';
+
+		function hash_is_valid(pass, hash) 
+		{
+		  return hash === crypt(pass, hash);
+		}
+
+		console.log(hash_is_valid(pass, hash)); // true or false
+
+
+
+
+
+		//Other attempt
+		 
+		 
+		 if(hash_is_valid(form.password.value, hash))
+		 {
+			alert('hash accepted')
+		 }
+		 
+		 if(form.username.value == "checkserveruserid" && form.password.value == "checkserverpswrd")
+		 {
+			window.open('index.html')/*opens tasks list while Id & password matches*/
+		 }
+		 else
+		 {
+		   alert("Error Password or Username")/*displays error message*/
+		 }
+	}
+    $("#LoginButton").click(check(this.form));
+});
+</script>
+
 <title>Login</title>
 </head>
 <body>
@@ -31,38 +77,10 @@ a {
 <form action="login_form.asp">
   Username: <input type="text" name="username"><br/><br/>
   Password: <input type="text" name="password"><br/><br/>
-  <input type="button" onclick="check(this.form)" value="Login"/>
+  <input type="button" id="LoginButton" value="Login"/>
   <input type="reset" value="Cancel"/>
 </form>
 
-<?php
-var crypt = require('crypt3'),
-    pass = form.password.value,
-    hash = '$6$rounds=1234$56abadac833a5$fQIaUG/da/KqlJc5DzCIym/PL.ZhEdw5VOZsw7mofkm.3aE2rZ/rjDCczymRbj1V3rF6lzJO7DR1WOd2ZnC6O.';
 
-function hash_is_valid(pass, hash) {
-  return hash === crypt(pass, hash);
-}
-
-console.log(hash_is_valid(pass, hash)); // true
-?>
-
-<script language="javascript">
-
-
-function check(form)/*function to check username & password*/
-{
- /*checkes whether the entered userid and password are matching*/
- 
- if(form.username.value == "checkserveruserid" && form.password.value == "checkserverpswrd")
-  {
-    window.open('index.html')/*opens tasks list while Id & password matches*/
-  }
- else
- {
-   alert("Error Password or Username")/*displays error message*/
-  }
-}
-</script>
 </body>
 </html> 
