@@ -53,7 +53,6 @@
 
 		// Check connection
 		if ($conn->connect_error) {
-			die(json_encode($arr));
 			die(json_encode('{"response":"failure","reason":"' . $conn->connect_error . '"}'));
 		}
 		
