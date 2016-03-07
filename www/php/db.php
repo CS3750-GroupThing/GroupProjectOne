@@ -1,12 +1,4 @@
 <?php
-//switch ($_SERVER['HTTP_ORIGIN']) {
-	//case 'http://from.com': case 'https://from.com':
-	header('Access-Control-Allow-Origin: '.$_SERVER['HTTP_ORIGIN']);
-	header('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
-	header('Access-Control-Max-Age: 1000');
-	header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
-//	break;
-//}
 	/*
 		This form is looking for the $_POST['username'], $_POST['password'], $_POST['action'](GET,DELETE, ADD) and $_POST['data']
 		The actions below perform the following functions
@@ -53,14 +45,13 @@
 
 		// Check connection
 		if ($conn->connect_error) {
-			die(json_encode('{"response":"failure","reason":"' . $conn->connect_error . '"}'));
+			die("Error: Authentication failed");
+			/* die("Connection failed: " . $conn->connect_error); */
 		}
 		
 		/*echo "Connected successfully";*/
 		$sql = "SELECT id, username, password FROM `todo_Users` WHERE username='$post_Username' LIMIT 1";
-		
-		/*$result = mysqli_query($connection, $sql) or die("Error in Selecting " . mysqli_error($connection));*/
-		$result = mysqli_query($connection, $sql) or die(json_encode('{"response":"failure","reason":"' . mysqli_error($connection) . '"}'));
+		$result = mysqli_query($connection, $sql) or die("Error in Selecting " . mysqli_error($connection));
 		$row = mysqli_fetch_assoc($result);
 		$owner_ID = $row['id'];
 
@@ -72,39 +63,22 @@
 				// Fetch table rows from mysql db
 				$sql = "SELECT * FROM `todo_Items` WHERE OWNER='$owner_ID'";
 				$result = mysqli_query($connection, $sql) or die("Error: " . mysqli_error($connection));
+				// Create an array
 				$emparray = array();
 				while($row=mysqli_fetch_assoc($result))
 				{
 					$emparray[] = $row;
 				}
 				/* Return values in a JSON format */
-				die(json_encode($emparray));
+				echo json_encode($emparray);
 			} else if ($post_Action == "DELETE") {
 				$sql = "DELETE * FROM `todo_Items` WHERE id='$post_Data' AND owner='$owner_ID'";
-				/*$result = mysqli_query($connection, $sql) or die("Error: " . mysqli_error($connection));*/
-				if (mysqli_query($connection, $sql)
-				{
-					die(json_encode('{"response":"success","reason":"none"}'));
-				} else {
-					die(json_encode('{"response":"failure","reason":"' . mysqli_error($connection) . '"}'));
-				}
+				$result = mysqli_query($connection, $sql) or die("Error: " . mysqli_error($connection));
 			} else if ($post_Action == "ADD") {
 				$sql = "INSERT INTO `todo_Items` (`owner`, `completed`, `description`) VALUES ('$owner_ID', '0', '$post_Data');";
-				//$result = mysqli_query($connection, $sql) or die("Error: " . mysqli_error($connection));
-				if (mysqli_query($connection, $sql)
-				{
-					die(json_encode('{"response":"success","reason":"none"}'));
-				} else {
-					die(json_encode('{"response":"failure","reason":"' . mysqli_error($connection) . '"}'));
-				}
-			} else {
-				die(json_encode('{"response":"failure","reason":"invalid action"}'));
+				$result = mysqli_query($connection, $sql) or die("Error: " . mysqli_error($connection));
 			}
 
-		} else {
-			die(json_encode('{"response":"failure","reason":"invalid username/password"}'));
 		}
-	} else {
-		die(json_encode('{"response":"failure","reason":"invalid post data"}'));
 	}
 ?>
