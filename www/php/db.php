@@ -101,6 +101,7 @@
 			die(json_encode('{"response":"failure","reason":"invalid username/password"}'));
 		}
 	} else {
-		die(json_encode('{"response":"failure","reason":"invalid post data"}'));
+		die(json_encode(print_r($_POST)));
+		//die(json_encode('{"response":"failure","reason":"invalid post data"}'));
 	}
 ?>
