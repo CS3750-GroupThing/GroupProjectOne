@@ -131,13 +131,13 @@ a {
 	/* Transaction error callback */
 	function errorCB(tx, err) {
 		/*alert("Error processing SQL: " + err);*/
-		/*console.log("SQL tx Error: " + err);*/
+		console.log("SQL tx Error: " + err);
 	}
 
 	/* Transaction success callback */
 	function successCB() {
 		/*alert("DB Transaction Success!");*/
-		console.log("DB Transaction Success!");
+		/*console.log("DB Transaction Success!");*/
 	}
 
 	/* ############################################################################################################## */
@@ -207,7 +207,7 @@ a {
 		db.transaction(queryDB, errorCB);
 		console.log("Attempting to update the database..");
 		syncDB();
-	}, 60000);
+	}, 6000);
     </script>
 </body>
 </html> 
