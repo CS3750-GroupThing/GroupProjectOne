@@ -23,7 +23,7 @@ a {
 </head>
 <body>
 
-<headerl>Todo List</headerl>&nbsp;for <headern id ="name"></headern>&nbsp;<headerc id ="count"></headerc>&nbsp;<headerr><a id="addLink" href="javascript:void(0)" onclick="addTodo();">&#x2710;</a></headerr>
+<headerl>Todo List</headerl>&nbsp;for <headern id ="name"></headern>&nbsp;<headerc id ="count"></headerc>&nbsp;<headerr><a id="addLink" href="javascript:void(0)" onclick="addTodoPrompt();">&#x2710;</a></headerr>
 <hr/>
 <table id="todoTable">
 
@@ -51,7 +51,7 @@ a {
 	db.transaction(auth, errorCB);
 
 	/* Sync database */
-	//syncDB(); Called in login.html so no need to call it here.  It will be run every 5 minutes set by the interval timer
+	db.transaction(syncDBTX, errorCB); //Called in login.html so no need to call it here.  It will be run every 5 minutes set by the interval timer
 	
 	/* Run initial query which in turn calls drawTable */
 	db.transaction(queryDB, errorCB);
@@ -66,8 +66,9 @@ a {
 		tx.executeSql('CREATE TABLE IF NOT EXISTS todo_Items (id INTEGER PRIMARY KEY, hash TEXT, timedate DATETIME DEFAULT CURRENT_TIMESTAMP, owner INTEGER NOT NULL, completed INTEGER NOT NULL, description TEXT NOT NULL)');
 		//tx.executeSql('INSERT INTO todo_Users (username, password, loggedin) VALUES ("TestOwner","7faa7303f769ce1d1f9c88bb669fbad62320c09eb131a47d78119842918853235f862caf9d9b2d6191cb03dad28609605c3f9298a8b81ab68674253e9e71d076", 1)');
 		//tx.executeSql('INSERT INTO todo_Users (username, password, loggedin) VALUES ("JoeBiden","8b5379d82d16e4c1fbe6aeb16b494da8bc11077571c994b47aafb8150abb4beeaa7ed43023edaebdfada54d003d402a1765a25e07f5b4009abbce83eb8acb19a", 0)');
+		//tx.executeSql("INSERT INTO todo_Items (hash, owner, completed, description) VALUES ('7faa7303f769ce1d1f9c88bb669fbad62', 1, 1, 'Meesa')");
 		tx.executeSql('UPDATE todo_Users SET loggedin=1 WHERE id=1');
-		tx.executeSql('UPDATE todo_Users SET loggedin=0 WHERE id=2');
+		//tx.executeSql('UPDATE todo_Users SET loggedin=0 WHERE id=2');
 	}
 
 
@@ -87,7 +88,12 @@ a {
 	/* ##### WRAPPER FUNCTIONS PROVIDED BY PHONEGAP ################################################################# */
 	/* ############################################################################################################## */
 
-	function addTodo()
+	function addTodoFromRemote(hash, timedate, completed, description)
+	{
+		db.transaction( function(tx){ addToDBFromRemote(tx, hash, timedate, completed, description) }, errorCB );
+	}
+
+	function addTodoPrompt()
 	{
 		db.transaction( function(tx){ addToDB(tx) }, errorCB );
 	}
@@ -105,12 +111,19 @@ a {
 	/* ############################################################################################################## */
 	/* ##### METHODS TO ACCESS DB ################################################################################### */
 	/* ############################################################################################################## */
+	function addToDBFromRemote(tx, hash, timedate, completed, description) {
+		var uniqueHash = uniqueid(owner_ID);
+		/*alert("Hash: " +  uniqueHash);*/
+		tx.executeSql("INSERT INTO todo_Items (hash, owner, timedate, completed, description) VALUES ('" + hash + "', "+ owner_ID + ", '"+ timedate + "', " + completed + ", '" + description + "')");
+		db.transaction(queryDB, errorCB);
+	}
+
 	function addToDB(tx, description) {
 		var todoDesc = prompt("What do you need to do?");
 		if (todoDesc != null) {
 			var uniqueHash = uniqueid(owner_ID);
 			/*alert("Hash: " +  uniqueHash);*/
-			tx.executeSql("INSERT INTO todo_Items (hash, owner, completed, description) VALUES ('" + uniqueHash + "', "+ owner_ID + ", 0, '" + todoDesc + "')");
+			console.log("INSERT INTO todo_Items (hash, owner, completed, description) VALUES ('" + uniqueHash + "', "+ owner_ID + ", 0, '" + todoDesc + "')");
 			db.transaction(queryDB, errorCB);
 		}
 	}
@@ -204,10 +217,11 @@ a {
 		/* Code to run every 5 seconds */
 		/* Functionality to sync data between the the local database and remote database should go here (or call another function). */
 		/* Once the databases are synced, it will redraw the table based on the updated local database by running the following line */
-		db.transaction(queryDB, errorCB);
 		console.log("Attempting to update the database..");
-		syncDB();
-	}, 6000);
+		//db.transaction(syncDB(), errorCB);
+		db.transaction(syncDBTX, errorCB);
+		db.transaction(queryDB, errorCB);
+	}, 10000);
     </script>
 </body>
 </html> 
