@@ -8,6 +8,8 @@ function authenticate(tx, results)
 	} else {
 		console.log("Found userid '" + results.rows.item(0).id + "' logged in.");
 		owner_ID = results.rows.item(0).id;
+		username = results.rows.item(0).username;
+		password = results.rows.item(0).password;
 		document.getElementById("name").innerHTML = results.rows.item(0).username;
 	}
 
@@ -15,5 +17,5 @@ function authenticate(tx, results)
 
 function auth(tx)
 {
-	tx.executeSql("SELECT id, username FROM todo_Users WHERE loggedin=" + 1 + " LIMIT 1", [], authenticate, errorCB);
+	tx.executeSql("SELECT id, username, password FROM todo_Users WHERE loggedin=" + 1 + " LIMIT 1", [], authenticate, errorCB);
 }
