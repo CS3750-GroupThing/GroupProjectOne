@@ -23,7 +23,7 @@ a {
 </head>
 <body>
 
-<headerl>Todo List</headerl>&nbsp;for <headern id ="name"></headern>&nbsp;<headerc id ="count"></headerc>&nbsp;<headerr><a id="addLink" href="javascript:void(0)" onclick="addTodoPrompt();">&#x2710;</a></headerr>
+<headerl>Todo List</headerl>&nbsp;for <headern id ="name"></headern>&nbsp;<headerc id ="count"></headerc>&nbsp;<headerr><a id="addLink" href="javascript:void(0)" onclick="addTodo();">&#x2710;</a></headerr>
 <hr/>
 <table id="todoTable">
 
@@ -36,127 +36,7 @@ a {
 <script type="text/javascript" charset="utf-8">
 	var owner_ID; /* Set by authenticate function */
 	var owner_Name;
-
-	/* The local database uses SQL Lite and does not support every command that MySQL supports.  */
-	/* Keep this in mind when creating databases on remote end.  Boolean is not supported for example, so I used INTEGER in its place. */
-	/*	Casting might be in order or just use the same types in MySQL that we used in the local database. */
-	/*	todo_Users has three fields - id INTEGER PRIMARY KEY, username TEXT NOT NULL, password TEXT NOT NULL */
-	/*	todo_Items has four fields - id INTEGER PRIMARY KEY, ownerid INTEGER NOT NULL, completed INTEGER NOT NULL, description TEXT NOT NULL */
-
-	/* Initialize database */
-	var db = window.openDatabase("Database", "1.0", "todo", 200000);
-	db.transaction(populateDB, errorCB, successCB);
-
-	/* Validate user status */
-	db.transaction(auth, errorCB);
-
-	/* Sync database */
-	db.transaction(syncDBTX, errorCB); //Called in login.html so no need to call it here.  It will be run every 5 minutes set by the interval timer
-	
-	/* Run initial query which in turn calls drawTable */
-	db.transaction(queryDB, errorCB);
-
-	// Populate the database 
-	// Only used to create the initial local tables.  Create these same tables on whatever MySQL database we use to make it easier to sync.
-	function populateDB(tx) {
-		//tx.executeSql('DROP TABLE IF EXISTS todo_Users');
-		//tx.executeSql('DROP TABLE IF EXISTS todo_Items');
-
-		tx.executeSql('CREATE TABLE IF NOT EXISTS todo_Users (id INTEGER PRIMARY KEY, timedate DATETIME DEFAULT CURRENT_TIMESTAMP, username TEXT NOT NULL, password TEXT NOT NULL, loggedin INTEGER)');
-		tx.executeSql('CREATE TABLE IF NOT EXISTS todo_Items (id INTEGER PRIMARY KEY, hash TEXT, timedate DATETIME DEFAULT CURRENT_TIMESTAMP, owner INTEGER NOT NULL, completed INTEGER NOT NULL, description TEXT NOT NULL)');
-		//tx.executeSql('INSERT INTO todo_Users (username, password, loggedin) VALUES ("TestOwner","7faa7303f769ce1d1f9c88bb669fbad62320c09eb131a47d78119842918853235f862caf9d9b2d6191cb03dad28609605c3f9298a8b81ab68674253e9e71d076", 1)');
-		//tx.executeSql('INSERT INTO todo_Users (username, password, loggedin) VALUES ("JoeBiden","8b5379d82d16e4c1fbe6aeb16b494da8bc11077571c994b47aafb8150abb4beeaa7ed43023edaebdfada54d003d402a1765a25e07f5b4009abbce83eb8acb19a", 0)');
-		//tx.executeSql("INSERT INTO todo_Items (hash, owner, completed, description) VALUES ('7faa7303f769ce1d1f9c88bb669fbad62', 1, 1, 'Meesa')");
-		tx.executeSql('UPDATE todo_Users SET loggedin=1 WHERE id=1');
-		//tx.executeSql('UPDATE todo_Users SET loggedin=0 WHERE id=2');
-	}
-
-
-	function uniqueid(owner)
-	{
-		var text = "";
-		var possible = owner + "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-		for( var i=0; i < 10; i++ )
-		{
-			text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-		}
-		return SHA512(text);
-	}
-
-	/* ############################################################################################################## */
-	/* ##### WRAPPER FUNCTIONS PROVIDED BY PHONEGAP ################################################################# */
-	/* ############################################################################################################## */
-
-	function addTodoFromRemote(hash, timedate, completed, description)
-	{
-		db.transaction( function(tx){ addToDBFromRemote(tx, hash, timedate, completed, description) }, errorCB );
-	}
-
-	function addTodoPrompt()
-	{
-		db.transaction( function(tx){ addToDB(tx) }, errorCB );
-	}
-
-	function removeTodo(todoID)
-	{
-		db.transaction( function(tx){ removeItemFromDB(tx, todoID) }, errorCB );
-	}
-
-	function completeToDo(todoID, truefalse)
-	{		
-		db.transaction( function(tx){ completeItemInDB(tx, todoID, truefalse) }, errorCB );
-	}
-	
-	/* ############################################################################################################## */
-	/* ##### METHODS TO ACCESS DB ################################################################################### */
-	/* ############################################################################################################## */
-	function addToDBFromRemote(tx, hash, timedate, completed, description) {
-		var uniqueHash = uniqueid(owner_ID);
-		/*alert("Hash: " +  uniqueHash);*/
-		tx.executeSql("INSERT INTO todo_Items (hash, owner, timedate, completed, description) VALUES ('" + hash + "', "+ owner_ID + ", '"+ timedate + "', " + completed + ", '" + description + "')");
-		db.transaction(queryDB, errorCB);
-	}
-
-	function addToDB(tx, description) {
-		var todoDesc = prompt("What do you need to do?");
-		if (todoDesc != null) {
-			var uniqueHash = uniqueid(owner_ID);
-			/*alert("Hash: " +  uniqueHash);*/
-			console.log("INSERT INTO todo_Items (hash, owner, completed, description) VALUES ('" + uniqueHash + "', "+ owner_ID + ", 0, '" + todoDesc + "')");
-			db.transaction(queryDB, errorCB);
-		}
-	}
-
-	function removeItemFromDB(tx, todoID) {
-		console.log("DELETE FROM todo_Items WHERE id=" + todoID + " AND owner=" + owner_ID);
-		db.transaction( function(tx){ tx.executeSql("DELETE FROM todo_Items WHERE id=" + todoID + " AND owner=" + owner_ID); }, errorCB );
-		db.transaction(queryDB, errorCB);
-	}
-
-	function completeItemInDB(tx, todoID, truefalse) {
-		console.log("UPDATE todo_Items SET completed=" + truefalse + " WHERE id=" + todoID + " AND owner=" + owner_ID);
-		db.transaction( function(tx){ tx.executeSql("UPDATE todo_Items SET completed=" + truefalse + "  WHERE id=" + todoID + " AND owner=" + owner_ID); }, errorCB );
-		db.transaction(queryDB, errorCB);
-	}
-
-
-	/* Transaction error callback */
-	function errorCB(tx, err) {
-		/*alert("Error processing SQL: " + err);*/
-		console.log("SQL tx Error: " + err);
-	}
-
-	/* Transaction success callback */
-	function successCB() {
-		/*alert("DB Transaction Success!");*/
-		/*console.log("DB Transaction Success!");*/
-	}
-
-	/* ############################################################################################################## */
-	/* ############################################################################################################## */
-	/* ############################################################################################################## */
-    
+    	getDB();
 	function clearTable()
 	{
 		var tableHeaderRowCount = 0;
@@ -167,25 +47,24 @@ a {
 		}
 	}
 
-	function queryDB(tx) {
-		console.log("SELECT * FROM todo_Items WHERE owner=" + owner_ID + " ORDER BY id DESC");
-    		tx.executeSql("SELECT * FROM todo_Items WHERE owner=" + owner_ID + " ORDER BY id DESC", [], drawTable, errorCB);
-	}
-
-	function drawTable(tx, results) {
-		var len = results.rows.length;
+	function drawTable(data)
+	{
 		clearTable();
-		/*alert("Todo item count: " + len);*/
-		document.getElementById("count").innerHTML = "(" + len + ")";
-		for (var i=0; i<len; i++){
-			/*alert("Row = " + i + " ID = " + results.rows.item(i).id + " Owner = " + results.rows.item(i).ownerid + " Completed =  " + results.rows.item(i).completed + " Description =  " + results.rows.item(i).description);*/
+		var jsonItems = JSON.parse(data);
+
+		console.log("Trying to parse JSON for " + jsonItems.length + " items.");
+		var len = jsonItems.length;
+		document.getElementById("count").innerHTML = "(" + jsonItems.length + ")";
+		for(var i = 0;i<jsonItems.length;i++)
+		{
+			/*console.log("Row = " + i + " ID = " + jsonItems[i].id + " Owner = " + jsonItems[i].ownerid + " Completed =  " + jsonItems[i].completed + " Description =  " + jsonItems[i].description);*/
 	    		var table = document.getElementById("todoTable");
 			table.style.width = '100%';
 			var header = table.createTHead();
 			var row = header.insertRow(0);
-			var todoID = results.rows.item(i).id;
-			var todoComplete = results.rows.item(i).completed;
-			var todoDesc = results.rows.item(i).description;
+			var todoID = jsonItems[i].hash;
+			var todoComplete = jsonItems[i].completed;
+			var todoDesc = jsonItems[i].description;
 			var cell0 = row.insertCell(0);
 			var cell1 = row.insertCell(1);
 			var cell2 = row.insertCell(2);
@@ -213,14 +92,15 @@ a {
 		}
 
 	}
+
+	function completeToDo(todoID, completed)
+	{
+		
+	}
+
 	setInterval(function(){
-		/* Code to run every 5 seconds */
-		/* Functionality to sync data between the the local database and remote database should go here (or call another function). */
-		/* Once the databases are synced, it will redraw the table based on the updated local database by running the following line */
 		console.log("Attempting to update the database..");
-		//db.transaction(syncDB(), errorCB);
-		db.transaction(syncDBTX, errorCB);
-		db.transaction(queryDB, errorCB);
+		getDB();
 	}, 10000);
     </script>
 </body>
