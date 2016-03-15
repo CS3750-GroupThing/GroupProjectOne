@@ -38,25 +38,46 @@
 		$servername = "localhost";
 		$username = "W00353910";
 		$password = "Aaroncs!";
+		$dbName = "W00353910";
 
 		$post_Username = $_POST['username'];
 		$post_Password = $_POST['password'];
 		$post_Action = $_POST['action'];
-		$post_Data = $_POST['data'];
+		if ($post_Action == "ADD")
+		{
+			if ((isset($_POST['hash'])) && (isset($_POST['data'])) && (isset($_POST['completed'])))
+			{
+				$post_Hash = $_POST['hash'];
+				$post_Data = $_POST['data'];
+				$post_Completed = $_POST['completed'];
+			} else {
+				die("Invalid Add request.");
+			}
+
+		} else if ($post_Action == "DELETE")
+		{
+			if (isset($_POST['hash']))
+			{
+				$post_Hash = $_POST['hash'];			
+			} else {
+				die("Invalid delete request.");
+			}
+		}
 
 		// Create connection
-		$conn = new mysqli($servername, $username, $password);
+		$connection = mysqli_connect($servername, $username, $password, $dbName);
 
 		// Check connection
-		if ($conn->connect_error) {
-			die(json_encode('{"response":"failure","reason":"' . $conn->connect_error . '"}'));
+		if (!$connection) {
+			die("Failure: Connection error");
 		}
 		
 		/*echo "Connected successfully";*/
 		$sql = "SELECT id, username, password FROM `todo_Users` WHERE username='$post_Username' LIMIT 1";
 		
-		/*$result = mysqli_query($connection, $sql) or die("Error in Selecting " . mysqli_error($connection));*/
-		$result = mysqli_query($connection, $sql) or die(json_encode('{"response":"failure","reason":"' . mysqli_error($connection) . '"}'));
+		$result = mysqli_query($connection, $sql) or die("Error in Selecting " . mysqli_error($connection));
+		//$result = mysqli_query($connection, $sql) or die(json_encode('{\"response\":\"failure",\"reason\":\"" . mysqli_error($connection) . "\"}'));
+
 		$row = mysqli_fetch_assoc($result);
 		$owner_ID = $row['id'];
 
@@ -66,7 +87,7 @@
 			if ($post_Action == "GET") 
 			{
 				// Fetch table rows from mysql db
-				$sql = "SELECT * FROM `todo_Items` WHERE OWNER='$owner_ID'";
+				$sql = "SELECT * FROM `todo_Items` WHERE owner=".$owner_ID;
 				$result = mysqli_query($connection, $sql) or die("Error: " . mysqli_error($connection));
 				$emparray = array();
 				while($row=mysqli_fetch_assoc($result))
@@ -76,32 +97,35 @@
 				/* Return values in a JSON format */
 				die(json_encode($emparray));
 			} else if ($post_Action == "DELETE") {
-				$sql = "DELETE * FROM `todo_Items` WHERE id='$post_Data' AND owner='$owner_ID'";
-				/*$result = mysqli_query($connection, $sql) or die("Error: " . mysqli_error($connection));*/
+				$sql = "DELETE FROM `todo_Items` WHERE owner=".$owner_ID." AND id=".$data;
+				echo $sql."<br /><br />";
 				if (mysqli_query($connection, $sql))
 				{
-					die(json_encode('{"response":"success","reason":"none"}'));
+					die("Successfully deleted.");
 				} else {
-					die(json_encode('{"response":"failure","reason":"' . mysqli_error($connection) . '"}'));
+					http_response_code(304);
+					die("Error: " . mysqli_error($connection));
 				}
 			} else if ($post_Action == "ADD") {
-				$sql = "INSERT INTO `todo_Items` (`owner`, `completed`, `description`) VALUES ('$owner_ID', '0', '$post_Data');";
-				//$result = mysqli_query($connection, $sql) or die("Error: " . mysqli_error($connection));
+				$sql = "INSERT INTO `todo_Items` (`owner`, `completed`, `description`) VALUES ($owner_ID, 0,'$post_Data');";
 				if (mysqli_query($connection, $sql))
 				{
-					die(json_encode('{"response":"success","reason":"none"}'));
+					http_response_code(201);
+					die("Successfully inserted.");
 				} else {
-					die(json_encode('{"response":"failure","reason":"' . mysqli_error($connection) . '"}'));
-				}
+					http_response_code(304);
+					die("Error: " . mysqli_error($connection));
+				} 
 			} else {
-				die(json_encode('{"response":"failure","reason":"invalid action"}'));
+				http_response_code(405);
+				die("Method Not Authorized");
 			}
 
 		} else {
-			die(json_encode('{"response":"failure","reason":"invalid username/password"}'));
+			http_response_code(401);
+			die("Failure: Invalid username/password");
 		}
 	} else {
-		die(json_encode(print_r($_POST)));
-		//die(json_encode('{"response":"failure","reason":"invalid post data"}'));
+		die(json_encode('{"response":"failure","reason":"invalid post data"}'));
 	}
 ?>
