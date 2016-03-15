@@ -25,49 +25,68 @@ a {
 </style>
 
 <script type="text/javascript">
-$(document).ready(function()
+
+function check(form)/*function to check username & password*/
 {
-	function check(form)/*function to check username & password*/
+ /*checkes whether the entered userid and password are matching*/
+	var pass = document.getElementById('password');
+	var user = document.getElementById('username');
+	var hash = SHA512(pass);
+	var db = window.openDatabase("Database", "1.0", "todo", 200000);
+	verifyPassword(user, hash);
+	
+	function error(tx, err) 
 	{
-	 /*checkes whether the entered userid and password are matching*/
-		var pass = document.getElementById('password');
-		var user = document.getElementById('username');
-		var hash = SHA512(pass);
-		var isEqual = tx.executeSql("COUNT (password) FROM todo_Users WHERE username ='" + user + "' AND password = '" + hash + "'");
-		alert("3");
-		
-		//'$6$rounds=1234$56abadac833a5$fQIaUG/da/KqlJc5DzCIym/PL.ZhEdw5VOZsw7mofkm.3aE2rZ/rjDCczymRbj1V3rF6lzJO7DR1WOd2ZnC6O.';
-
-		function hash_is_valid(pass, hash) 
-		{
-		  return hash === crypt(pass, hash);
-		}
-
-		console.log(hash_is_valid(pass, hash)); // true or false
-
-
-
-
-
-		//Other attempt
-		 
-		 
-		 if(hash_is_valid(form.password.value, hash))
-		 {
-			alert('hash accepted')
-		 }
-		 
-		 if(form.username.value == "checkserveruserid" && form.password.value == "checkserverpswrd")
-		 {
-			window.open('index.html')/*opens tasks list while Id & password matches*/
-		 }
-		 else
-		 {
-		   alert("Error Password or Username")/*displays error message*/
-		 }
+		console.log("SQL tx Error: " + err);
 	}
-    $("#LoginButton").click(check(this.form));
-});
+	
+	function verifyPassword(user, hash)
+	{		
+		db.transaction( function(tx){ verifyWithDB(user, hash) }, error);
+	}
+	
+	function verifyWithDB(user, hash) 
+	{
+		console.log("COUNT (password) FROM todo_Users WHERE username ='" + user + "' AND password = '" + hash + "'");
+		db.transaction( function(tx){ tx.executeSql("COUNT (password) FROM todo_Users WHERE username ='" + user + "' AND password = '" + hash + "'"); }, error);
+	}
+	
+	//var isEqual = tx.executeSql("COUNT (password) FROM todo_Users WHERE username ='" + user + "' AND password = '" + hash + "'");
+	
+	//'$6$rounds=1234$56abadac833a5$fQIaUG/da/KqlJc5DzCIym/PL.ZhEdw5VOZsw7mofkm.3aE2rZ/rjDCczymRbj1V3rF6lzJO7DR1WOd2ZnC6O.';
+
+	/*function hash_is_valid(pass, hash) 
+	{
+	  return hash === crypt(pass, hash);
+	}
+
+	console.log(hash_is_valid(pass, hash)); // true or false*/
+
+
+
+
+
+	//Other attempt
+	 
+	 /*
+	 if(hash_is_valid(form.password.value, hash))
+	 {
+		alert('hash accepted')
+	 }
+	 
+	 if(form.username.value == "checkserveruserid" && form.password.value == "checkserverpswrd")
+	 {
+		window.open('index.html') //opens tasks list while Id & password matches
+	 }
+	 else
+	 {
+	   alert("Error Password or Username")//displays error message
+	 }
+	 */
+	 
+}
+$("#LoginButton").click(check(this.form));
+
 </script>
 
 <title>Login</title>
