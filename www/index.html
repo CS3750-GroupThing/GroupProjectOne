@@ -62,7 +62,7 @@ a {
 			table.style.width = '100%';
 			var header = table.createTHead();
 			var row = header.insertRow(0);
-			var todoID = jsonItems[i].hash;
+			var todoID = jsonItems[i].id;
 			var todoComplete = jsonItems[i].completed;
 			var todoDesc = jsonItems[i].description;
 			var cell0 = row.insertCell(0);
@@ -77,9 +77,9 @@ a {
 			{
 				cell1.style.setProperty("text-decoration", "line-through");
 				cell1.style.setProperty("color", "green");
-				cell0.innerHTML = "<a href='javascript:void(0)' onclick='completeToDo(" + todoID + ",0)'><img src='img\\checkedbox_icon.png'></a>";
+				cell0.innerHTML = "<a href='javascript:void(0)' onclick='completeToDo(" + todoID + ")'><img src='img\\checkedbox_icon.png'></a>";
 			} else {
-				cell0.innerHTML = "<a href='javascript:void(0)' onclick='completeToDo(" + todoID + ",1)'><img src='img\\uncheckedbox_icon.png'></a>";
+				cell0.innerHTML = "<a href='javascript:void(0)' onclick='completeToDo(" + todoID + ")'><img src='img\\uncheckedbox_icon.png'></a>";
 				cell1.style.setProperty("color", "red");
 			}
 
@@ -88,7 +88,7 @@ a {
 			cell1.style.fontSize = "28px";
 			cell2.style.width = "50px";
 
-			cell2.innerHTML = "<a href='javascript:void(0)' onclick='removeTodo(" + todoID + ")'><img src='img\\trash_icon.png'></a>";
+			cell2.innerHTML = "<a href='javascript:void(0)' onclick='delTodo(" + todoID + ")'><img src='img\\trash_icon.png'></a>";
 		}
 
 	}

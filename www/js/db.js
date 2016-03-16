@@ -9,7 +9,7 @@ function getDB()
             'Accept': "application/json; encoding='utf-8'",
             'Content-Type': "application/json; encoding='utf-8'"
         };
-	$.post("http://icarus.cs.weber.edu/~al53910/db.php",
+	$.post(url,
 	{
 		username: userName,
 		password: passWord,
@@ -22,21 +22,19 @@ function getDB()
 	});
 }
 
-function completeTodo(id)
+function completeToDo(id)
 {
-	var action = "UPDATE";
-	console.log("Running action: " + action);
 	var jsonTodoItems;
 	var headers = {
             'Accept': "application/json; encoding='utf-8'",
             'Content-Type': "application/json; encoding='utf-8'"
         };
-	$.post("http://icarus.cs.weber.edu/~al53910/db.php",
+	$.post(url,
 	{
 		username: userName,
 		password: passWord,
 		action: "UPDATE",
-		data: id
+		id: id
 	},
 	function(data,status)
 	{
@@ -54,12 +52,12 @@ function addTodo(description)
 			'Accept': "application/json; encoding='utf-8'",
 			'Content-Type': "application/json; encoding='utf-8'"
 		};
-		$.post("http://icarus.cs.weber.edu/~al53910/db.php",
+		$.post(url,
 		{
 			username: userName,
 			password: passWord,
 			action: "ADD",
-			description: description
+			data: todoDesc
 		},
 		function(data,status)
 		{
@@ -82,7 +80,7 @@ function delTodo(id)
 		username: userName,
 		password: passWord,
 		action: "DELETE",
-		data: id
+		id: id
 	},
 	function(data,status)
 	{

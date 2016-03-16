@@ -45,20 +45,24 @@
 		$post_Action = $_POST['action'];
 		if ($post_Action == "ADD")
 		{
-			if ((isset($_POST['hash'])) && (isset($_POST['data'])) && (isset($_POST['completed'])))
+			if (isset($_POST['data']))
 			{
-				$post_Hash = $_POST['hash'];
 				$post_Data = $_POST['data'];
-				$post_Completed = $_POST['completed'];
 			} else {
 				die("Invalid Add request.");
 			}
 
-		} else if ($post_Action == "DELETE")
-		{
-			if (isset($_POST['hash']))
+		} else if ($post_Action == "DELETE") {
+			if (isset($_POST['id']))
 			{
-				$post_Hash = $_POST['hash'];			
+				$post_ID = $_POST['id'];			
+			} else {
+				die("Invalid delete request.");
+			}
+		} else if ($post_Action == "UPDATE") {
+			if (isset($_POST['id']))
+			{
+				$post_ID = $_POST['id'];			
 			} else {
 				die("Invalid delete request.");
 			}
@@ -97,7 +101,7 @@
 				/* Return values in a JSON format */
 				die(json_encode($emparray));
 			} else if ($post_Action == "DELETE") {
-				$sql = "DELETE FROM `todo_Items` WHERE owner=".$owner_ID." AND id=".$data;
+				$sql = "DELETE FROM `todo_Items` WHERE owner=".$owner_ID." AND id=".$post_ID;
 				echo $sql."<br /><br />";
 				if (mysqli_query($connection, $sql))
 				{
@@ -114,6 +118,16 @@
 					die("Successfully inserted.");
 				} else {
 					http_response_code(304);
+					die("Error: " . mysqli_error($connection));
+				}
+			} else if ($post_Action == "UPDATE") {
+				$sql = "UPDATE `todo_Items` SET completed = NOT completed WHERE id = ".$post_ID;
+				if (mysqli_query($connection, $sql))
+				{
+					//http_response_code(201);
+					die("Successfully inserted.");
+				} else {
+					//http_response_code(304);
 					die("Error: " . mysqli_error($connection));
 				} 
 			} else {
