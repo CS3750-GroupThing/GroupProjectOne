@@ -1,16 +1,13 @@
 
-function authenticate(tx, results)
+function authenticate()
 {
-	var len = results.rows.length;
-	if (len == 0)
+	if (userName == null)
 	{
 		console.log("No users are logged in.  Redirecting to login.html");
+		window.location="login.html";
 	} else {
-		console.log("Found userid '" + results.rows.item(0).id + "' logged in.");
-		owner_ID = results.rows.item(0).id;
-		username = results.rows.item(0).username;
-		password = results.rows.item(0).password;
-		document.getElementById("name").innerHTML = results.rows.item(0).username;
+		console.log("Accessing website using the username: '" + userName + "'.");
+		document.getElementById("name").innerHTML = userName;
 	}
 
 }

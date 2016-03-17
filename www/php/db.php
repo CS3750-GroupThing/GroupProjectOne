@@ -4,7 +4,7 @@
 	header('Access-Control-Max-Age: 1000');
 	header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
 	/*
-		This form is looking for the $_POST['username'], $_POST['password'], $_POST['action'](GET,DELETE, ADD) and $_POST['data']
+		This form is looking for the $_POST['username'], $_POST['action'](GET,DELETE, ADD) and $_POST['data']
 		The actions below perform the following functions
 		- ADD - Inserts an entry in to todo_Items using the $_POST['data'] as the description
 		- DELETE - Deletes 1 entry from todo_Items where id=$_POST['data']
@@ -30,7 +30,7 @@
 	*/
 
 	/* VERIFY A USERNAME, PASSWORD AND ACTION WERE SUPPLIED VIA POST submission */
-	if (isset($_POST['username']) && isset($_POST['password']) && isset($_POST['action']))
+	if (isset($_POST['username']) && isset($_POST['action']))
 	{
 
 
@@ -41,7 +41,6 @@
 		$dbName = "W00353910";
 
 		$post_Username = $_POST['username'];
-		$post_Password = $_POST['password'];
 		$post_Action = $_POST['action'];
 		if ($post_Action == "ADD")
 		{
@@ -77,7 +76,7 @@
 		}
 		
 		/*echo "Connected successfully";*/
-		$sql = "SELECT id, username, password FROM `todo_Users` WHERE username='$post_Username' LIMIT 1";
+		$sql = "SELECT id, username FROM `todo_Users` WHERE username='$post_Username' LIMIT 1";
 		
 		$result = mysqli_query($connection, $sql) or die("Error in Selecting " . mysqli_error($connection));
 		//$result = mysqli_query($connection, $sql) or die(json_encode('{\"response\":\"failure",\"reason\":\"" . mysqli_error($connection) . "\"}'));
@@ -86,7 +85,7 @@
 		$owner_ID = $row['id'];
 
 		/* VERIFY $_POST USERNAME AND PASSWORD AGAINST DATABASE USERNAME AND PASSWORD */
-		if (($row['username'] == $post_Username) && ($row['password'] == $post_Password))
+		if ($row['username'] == $post_Username)
 		{
 			if ($post_Action == "GET") 
 			{
