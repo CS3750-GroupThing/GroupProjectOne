@@ -26,15 +26,22 @@ a {
 
 <script type="text/javascript">
 
-function check(form)/*function to check username & password*/
+function addUser()
 {
- 
-	var pass = document.getElementById('password');
-	var user = document.getElementById('username');
-	var hash = SHA512(pass);
-	// add a check that both password match
+	var dbusername = $("#username").val();
+	var dbpassword = $("#password").val();
+	//var hashpassword = SHA512(dbpassword);
+    $.post( "http://scottschollmeyer.info/CS3750/assign2/userData.php",
+	{
+	username : dbusername,
+	password: dbpassword,
+	action: "add"
+	},
+	function( data, status) {
+    alert( "Data Loaded: " + data );
+  });
 
-// add jquery to add ti data base
+}
 
 </script>
 
@@ -42,13 +49,12 @@ function check(form)/*function to check username & password*/
 </head>
 <body>
 
-<form action="login_form.asp">
-  Username: <input type="text" name="username"><br/><br/>
-  Password: <input type="text" name="password"><br/><br/>
-  Password: <input type="text" name="passwordcheck"><br/><br/>
-  <input type="button" id="regBtn" value="Register"/>
+  Username: <input type="text" name="username" id="username"><br/><br/>
+  Password: <input type="text" name="password" id="password"><br/><br/>
+
+  <button onclick="addUser()" id="regBtn"> Register </button>
   
-</form>
+
 
 
 </body>
