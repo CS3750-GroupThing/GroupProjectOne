@@ -31,7 +31,7 @@ function addUser()
 	var dbusername = $("#username").val();
 	var dbpassword = $("#password").val();
 	var hashpassword = SHA512(dbpassword);
-    $.post( "http://scottschollmeyer.info/CS3750/assign2/userData.php",
+    $.post( "http://icarus.cs.weber.edu/~al53910/php/userData.php",
 	{
 	username : dbusername,
 	password: hashpassword,
