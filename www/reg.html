@@ -34,7 +34,7 @@ function addUser()
     $.post( "http://scottschollmeyer.info/CS3750/assign2/userData.php",
 	{
 	username : dbusername,
-	password: dbpassword,
+	password: hashpassword,
 	action: "add"
 	},
 	function( data, status) {
