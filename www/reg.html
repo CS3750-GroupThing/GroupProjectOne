@@ -39,6 +39,10 @@ function addUser()
 	},
 	function( data, status) {
     alert( "Data Loaded: " + data );
+	
+//	This is where logic should go to see if registration was successful, to couch this statement:
+	//test should be replaced with the actual username
+	localStorage.setItem("username", "test")
   });
 
 }

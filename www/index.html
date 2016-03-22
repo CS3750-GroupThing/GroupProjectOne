@@ -34,7 +34,9 @@ a {
 <script type="text/javascript" charset="utf-8" src="js\db.js"></script>
 <script type="text/javascript" charset="utf-8" src="js\auth.js"></script>
 <script type="text/javascript" charset="utf-8">
-	var userName = "TestOwner"
+	
+	var userName = localStorage.getItem("username");
+	//var userName = "TestOwner"
 	authenticate();
     	getDB();
 	function clearTable()
@@ -96,6 +98,7 @@ a {
 		console.log("Attempting to update the database..");
 		getDB();
 	}, 10000);
+	
     </script>
 </body>
 </html> 
