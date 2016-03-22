@@ -87,6 +87,9 @@ function check()/*function to check username & password*/
 }
 //$("#LoginButton").click(check(this.form));
 
+//	Place with which to set the username to send to the other page(s)
+	localStorage.setItem("username", "test");
+
 </script>
 
 <title>Login</title>
@@ -95,7 +98,7 @@ function check()/*function to check username & password*/
 
 <form action="login_form.asp">
   Username: <input type="text" name="username"><br/><br/>
-  Password: <input type="text" name="password"><br/><br/>
+  Password: <input type="password" name="password"><br/><br/>
   <input type="button" id="LoginButton" value="Login" onclick="check();"/>
   <input type="reset" value="Cancel"/><br/><br/>
   <a href="registration.html">Create a new account</a>
