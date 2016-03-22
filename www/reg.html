@@ -39,6 +39,9 @@ function addUser()
 	},
 	function( data, status) {
     alert( "Data Loaded: " + data );
+	
+	localStorage.setItem("username", dbusername);
+	window.location.replace("index.html");
   });
 
 }
