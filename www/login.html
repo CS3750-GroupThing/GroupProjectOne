@@ -32,6 +32,50 @@ function check()/*function to check username & password*/
 	var pass = document.getElementById('password');
 	var user = document.getElementById('username');
 	var hash = SHA512(pass);
+	
+	
+	function getUser()
+	{
+		$.post( "http://scottschollmeyer.info/CS3750/assign2/userData.php",
+		{
+		username : user,
+		password: hash,
+		action: "get"
+		},
+		function( data, status) {
+			if(status.toUpperCase == "SUCCESS")
+			{
+				window.location.replace("index.html");
+			}
+			else if(status.toUpperCase == "FAILURE")
+			{
+				alert("Username or Password Incorrect");
+			}
+		});
+		
+	}
+	
+	pass = null;
+	user = null;
+	hash = null;
+	
+	document.getElementsByName("password").value = "";
+	document.getElementsByName("username").value = "";
+	
+	//javascript
+	/*
+	$.get("http://icarus.cs.weber.edu/~al53910/db.php",
+	{username: "" + user + "", password: "" + hash + ""} )
+	.done(function(data)
+	{
+		alert("Data: " + data);
+		});
+	});
+	*/
+	//end 
+	
+	
+	/*
 	var db = window.openDatabase("Database", "1.0", "todo", 200000);
 	verifyPassword(user, hash);
 	
@@ -50,6 +94,7 @@ function check()/*function to check username & password*/
 		console.log("COUNT (password) FROM todo_Users WHERE username ='" + user + "' AND password = '" + hash + "'");
 		db.transaction( function(tx){ tx.executeSql("COUNT (password) FROM todo_Users WHERE username ='" + user + "' AND password = '" + hash + "'"); }, error);
 	}
+	*/
 	
 	//var isEqual = tx.executeSql("COUNT (password) FROM todo_Users WHERE username ='" + user + "' AND password = '" + hash + "'");
 	
