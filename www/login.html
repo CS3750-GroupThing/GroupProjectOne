@@ -16,12 +16,6 @@ her {
 
 }
 
-
-a {
-  color: black;
-  text-decoration: none; /* no underline */
-}
-
 </style>
 
 <script type="text/javascript">
@@ -43,11 +37,11 @@ function check()/*function to check username & password*/
 		action: "get"
 		},
 		function( data, status) {
-			if(status.toUpperCase == "SUCCESS")
+			if(data.toUpperCase == "SUCCESS")
 			{
 				window.location.replace("index.html");
 			}
-			else if(status.toUpperCase == "FAILURE")
+			else if(data.toUpperCase == "FAILURE")
 			{
 				alert("Username or Password Incorrect");
 			}
@@ -143,7 +137,7 @@ function check()/*function to check username & password*/
   Password: <input type="password" name="password"><br/><br/>
   <input type="button" id="LoginButton" value="Login" onclick="check();"/>
   <input type="reset" value="Cancel"/><br/><br/>
-  <a href="registration.html">Create a new account</a>
+  <a href="reg.html">Create a new account</a>
 </form>
 
 
