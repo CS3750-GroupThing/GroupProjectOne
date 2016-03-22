@@ -30,7 +30,7 @@ function addUser()
 {
 	var dbusername = $("#username").val();
 	var dbpassword = $("#password").val();
-	//var hashpassword = SHA512(dbpassword);
+	var hashpassword = SHA512(dbpassword);
     $.post( "http://scottschollmeyer.info/CS3750/assign2/userData.php",
 	{
 	username : dbusername,
