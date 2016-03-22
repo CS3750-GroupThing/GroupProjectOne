@@ -13,7 +13,7 @@ function getDB()
 	$.post(url,
 	{
 		username: userName,
-		password: passWord,
+		//password: passWord,
 		action: "GET"
 	},
 	function(data,status)
@@ -33,7 +33,7 @@ function completeToDo(id)
 	$.post(url,
 	{
 		username: userName,
-		password: passWord,
+		//password: passWord,
 		action: "UPDATE",
 		id: id
 	},
@@ -56,7 +56,7 @@ function addTodo(description)
 		$.post(url,
 		{
 			username: userName,
-			password: passWord,
+			//password: passWord,
 			action: "ADD",
 			data: todoDesc
 		},
@@ -79,7 +79,7 @@ function delTodo(id)
 	$.post("http://icarus.cs.weber.edu/~al53910/db.php",
 	{
 		username: userName,
-		password: passWord,
+		//password: passWord,
 		action: "DELETE",
 		id: id
 	},
