@@ -8,140 +8,50 @@
 hel {
 	font-size: 2.5em; /* 40px/16=2.5em */
 }
-
 her {
 	font-size: 2.5em; /* 40px/16=2.5em */
 	position: absolute;
 	right: 10px;
-
 }
-
 </style>
 
 <script type="text/javascript">
-
-function check()/*function to check username & password*/
-{
- /*checkes whether the entered userid and password are matching*/
-	var pass = document.getElementById('password');
-	var user = document.getElementById('username');
+/*function to check username & password*/
+function check()
+{	
+	var user = $("#username").val();
+	var pass = $("#password").val();
 	var hash = SHA512(pass);
-	
-	
-	function getUser()
+	console.log("Trying username: " + user + " & hash: " + hash);
+
+	$.post( "http://icarus.cs.weber.edu/~al53910/userData.php",
 	{
-		$.post( "http://icarus.cs.weber.edu/~al53910/php/userData.php",
-		{
 		username : user,
 		password: hash,
 		action: "get"
-		},
-		function( data, status) {
-			if(data.toUpperCase == "SUCCESS")
-			{
-				window.location.replace("index.html");
-			}
-			else if(data.toUpperCase == "FAILURE")
-			{
-				alert("Username or Password Incorrect");
-			}
-		});
-		
-	}
-	
-	pass = null;
-	user = null;
-	hash = null;
-	
-	document.getElementsByName("password").value = "";
-	document.getElementsByName("username").value = "";
-	
-	//javascript
-	/*
-	$.get("http://icarus.cs.weber.edu/~al53910/db.php",
-	{username: "" + user + "", password: "" + hash + ""} )
-	.done(function(data)
-	{
-		alert("Data: " + data);
-		});
+	},
+	function( data, status) {
+		console.log(data);
+		if(data == "Success")
+		{
+			window.location.replace("index.html");
+		} else {
+			alert("Username or Password Incorrect");
+		}
 	});
-	*/
-	//end 
-	
-	
-	/*
-	var db = window.openDatabase("Database", "1.0", "todo", 200000);
-	verifyPassword(user, hash);
-	
-	function error(tx, err) 
-	{
-		console.log("SQL tx Error: " + err);
-	}
-	
-	function verifyPassword(user, hash)
-	{		
-		db.transaction( function(tx){ verifyWithDB(user, hash) }, error);
-	}
-	
-	function verifyWithDB(user, hash) 
-	{
-		console.log("COUNT (password) FROM todo_Users WHERE username ='" + user + "' AND password = '" + hash + "'");
-		db.transaction( function(tx){ tx.executeSql("COUNT (password) FROM todo_Users WHERE username ='" + user + "' AND password = '" + hash + "'"); }, error);
-	}
-	*/
-	
-	//var isEqual = tx.executeSql("COUNT (password) FROM todo_Users WHERE username ='" + user + "' AND password = '" + hash + "'");
-	
-	//'$6$rounds=1234$56abadac833a5$fQIaUG/da/KqlJc5DzCIym/PL.ZhEdw5VOZsw7mofkm.3aE2rZ/rjDCczymRbj1V3rF6lzJO7DR1WOd2ZnC6O.';
-
-	/*function hash_is_valid(pass, hash) 
-	{
-	  return hash === crypt(pass, hash);
-	}
-
-	console.log(hash_is_valid(pass, hash)); // true or false*/
-
-
-
-
-
-	//Other attempt
-	 
-	 /*
-	 if(hash_is_valid(form.password.value, hash))
-	 {
-		alert('hash accepted')
-	 }
-	 
-	 if(form.username.value == "checkserveruserid" && form.password.value == "checkserverpswrd")
-	 {
-		window.open('index.html') //opens tasks list while Id & password matches
-	 }
-	 else
-	 {
-	   alert("Error Password or Username")//displays error message
-	 }
-	 */
-	 
 }
-//$("#LoginButton").click(check(this.form));
-
-//	Place with which to set the username to send to the other page(s)
-	localStorage.setItem("username", "test");
-
-</script>
+ </script>
 
 <title>Login</title>
 </head>
 <body>
-
-<form action="login_form.asp">
-  Username: <input type="text" name="username"><br/><br/>
-  Password: <input type="password" name="password"><br/><br/>
+<form>
+  Username: <input type="text" name="username" id="username"><br/><br/>
+  Password: <input type="password" name="password" id="password"><br/><br/>
   <input type="button" id="LoginButton" value="Login" onclick="check();"/>
   <input type="reset" value="Cancel"/><br/><br/>
-  <a href="reg.html">Create a new account</a>
 </form>
+  <a href="reg.html">Create a new account</a>
 
 
 </body>

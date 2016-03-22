@@ -1,4 +1,3 @@
-
 function authenticate()
 {
 	if (userName == null)
@@ -10,9 +9,4 @@ function authenticate()
 		document.getElementById("name").innerHTML = userName;
 	}
 
-}
-
-function auth(tx)
-{
-	tx.executeSql("SELECT id, username, password FROM todo_Users WHERE loggedin=" + 1 + " LIMIT 1", [], authenticate, errorCB);
 }

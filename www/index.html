@@ -48,12 +48,10 @@ a {
 		    table.deleteRow(tableHeaderRowCount);
 		}
 	}
-
 	function drawTable(data)
 	{
 		clearTable();
 		var jsonItems = JSON.parse(data);
-
 		console.log("Trying to parse JSON for " + jsonItems.length + " items.");
 		var len = jsonItems.length;
 		document.getElementById("count").innerHTML = "(" + jsonItems.length + ")";
@@ -84,15 +82,12 @@ a {
 				cell0.innerHTML = "<a href='javascript:void(0)' onclick='completeToDo(" + todoID + ")'><img src='img\\uncheckedbox_icon.png'></a>";
 				cell1.style.setProperty("color", "red");
 			}
-
 			cell0.style.width = "50px";
 			cell1.style.width = '100%';
 			cell1.style.fontSize = "28px";
 			cell2.style.width = "50px";
-
 			cell2.innerHTML = "<a href='javascript:void(0)' onclick='delTodo(" + todoID + ")'><img src='img\\trash_icon.png'></a>";
 		}
-
 	}
 	setInterval(function(){
 		console.log("Attempting to update the database..");

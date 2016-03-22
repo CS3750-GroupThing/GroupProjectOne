@@ -8,20 +8,15 @@
 hel {
 	font-size: 2.5em; /* 40px/16=2.5em */
 }
-
 her {
 	font-size: 2.5em; /* 40px/16=2.5em */
 	position: absolute;
 	right: 10px;
-
 }
-
-
 a {
   color: black;
   text-decoration: none; /* no underline */
 }
-
 </style>
 
 <script type="text/javascript">
@@ -31,34 +26,30 @@ function addUser()
 	var dbusername = $("#username").val();
 	var dbpassword = $("#password").val();
 	var hashpassword = SHA512(dbpassword);
-    $.post( "http://icarus.cs.weber.edu/~al53910/php/userData.php",
+	$.post( "http://icarus.cs.weber.edu/~al53910/userData.php",
 	{
-	username : dbusername,
-	password: hashpassword,
-	action: "add"
+		username : dbusername,
+		password: hashpassword,
+		action: "add"
 	},
 	function( data, status) {
-    alert( "Data Loaded: " + data );
-	
-	localStorage.setItem("username", dbusername);
-	window.location.replace("index.html");
-  });
-
+		console.log("Status: " + data);
+		if (data == "Success")
+		{
+			localStorage.setItem("username", dbusername);
+			window.location.replace("index.html");
+		} else {
+			alert("An error occurred.  Please try again.");
+		}
+	});
 }
-
 </script>
 
 <title>Register</title>
 </head>
 <body>
-
   Username: <input type="text" name="username" id="username"><br/><br/>
-  Password: <input type="password" name="password" id="password"><br/><br/>
-
+  Password: <input type="text" name="password" id="password"><br/><br/>
   <button onclick="addUser()" id="regBtn"> Register </button>
-  
-
-
-
 </body>
 </html> 

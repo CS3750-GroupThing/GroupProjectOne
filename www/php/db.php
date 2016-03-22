@@ -1,10 +1,6 @@
 <?php
-	header('Access-Control-Allow-Origin: *');
-	header('Access-Control-Allow-Methods: GET, PUT, POST, DELETE, OPTIONS');
-	header('Access-Control-Max-Age: 1000');
-	header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
 	/*
-		This form is looking for the $_POST['username'], $_POST['action'](GET,DELETE, ADD) and $_POST['data']
+		This form is looking for the $_POST['username'], $_POST['password'], $_POST['action'](GET,DELETE, ADD) and $_POST['data']
 		The actions below perform the following functions
 		- ADD - Inserts an entry in to todo_Items using the $_POST['data'] as the description
 		- DELETE - Deletes 1 entry from todo_Items where id=$_POST['data']
@@ -30,7 +26,7 @@
 	*/
 
 	/* VERIFY A USERNAME, PASSWORD AND ACTION WERE SUPPLIED VIA POST submission */
-	if (isset($_POST['username']) && isset($_POST['action']))
+	if (isset($_POST['username']) && isset($_POST['password']) && isset($_POST['action']))
 	{
 
 
@@ -38,107 +34,51 @@
 		$servername = "localhost";
 		$username = "W00353910";
 		$password = "Aaroncs!";
-		$dbName = "W00353910";
 
 		$post_Username = $_POST['username'];
+		$post_Password = $_POST['password'];
 		$post_Action = $_POST['action'];
-		if ($post_Action == "ADD")
-		{
-			if (isset($_POST['data']))
-			{
-				$post_Data = $_POST['data'];
-			} else {
-				die("Invalid Add request.");
-			}
-
-		} else if ($post_Action == "DELETE") {
-			if (isset($_POST['id']))
-			{
-				$post_ID = $_POST['id'];			
-			} else {
-				die("Invalid delete request.");
-			}
-		} else if ($post_Action == "UPDATE") {
-			if (isset($_POST['id']))
-			{
-				$post_ID = $_POST['id'];			
-			} else {
-				die("Invalid delete request.");
-			}
-		}
+		$post_Data = $_POST['data'];
 
 		// Create connection
-		$connection = mysqli_connect($servername, $username, $password, $dbName);
+		$conn = new mysqli($servername, $username, $password);
 
 		// Check connection
-		if (!$connection) {
-			die("Failure: Connection error");
+		if ($conn->connect_error) {
+			die("Error: Authentication failed");
+			/* die("Connection failed: " . $conn->connect_error); */
 		}
 		
 		/*echo "Connected successfully";*/
-		$sql = "SELECT id, username FROM `todo_Users` WHERE username='$post_Username' LIMIT 1";
-		
+		$sql = "SELECT id, username, password FROM `todo_Users` WHERE username='$post_Username' LIMIT 1";
 		$result = mysqli_query($connection, $sql) or die("Error in Selecting " . mysqli_error($connection));
-		//$result = mysqli_query($connection, $sql) or die(json_encode('{\"response\":\"failure",\"reason\":\"" . mysqli_error($connection) . "\"}'));
-
 		$row = mysqli_fetch_assoc($result);
 		$owner_ID = $row['id'];
 
 		/* VERIFY $_POST USERNAME AND PASSWORD AGAINST DATABASE USERNAME AND PASSWORD */
-		if ($row['username'] == $post_Username)
+		if (($row['username'] == $post_Username) && ($row['password'] == $post_Password))
 		{
 			if ($post_Action == "GET") 
 			{
 				// Fetch table rows from mysql db
-				$sql = "SELECT * FROM `todo_Items` WHERE owner=".$owner_ID;
+				$sql = "SELECT * FROM `todo_Items` WHERE OWNER='$owner_ID'";
 				$result = mysqli_query($connection, $sql) or die("Error: " . mysqli_error($connection));
+				// Create an array
 				$emparray = array();
 				while($row=mysqli_fetch_assoc($result))
 				{
 					$emparray[] = $row;
 				}
 				/* Return values in a JSON format */
-				die(json_encode($emparray));
+				echo json_encode($emparray);
 			} else if ($post_Action == "DELETE") {
-				$sql = "DELETE FROM `todo_Items` WHERE owner=".$owner_ID." AND id=".$post_ID;
-				echo $sql."<br /><br />";
-				if (mysqli_query($connection, $sql))
-				{
-					die("Successfully deleted.");
-				} else {
-					http_response_code(304);
-					die("Error: " . mysqli_error($connection));
-				}
+				$sql = "DELETE * FROM `todo_Items` WHERE id='$post_Data' AND owner='$owner_ID'";
+				$result = mysqli_query($connection, $sql) or die("Error: " . mysqli_error($connection));
 			} else if ($post_Action == "ADD") {
-				$sql = "INSERT INTO `todo_Items` (`owner`, `completed`, `description`) VALUES ($owner_ID, 0,'$post_Data');";
-				if (mysqli_query($connection, $sql))
-				{
-					http_response_code(201);
-					die("Successfully inserted.");
-				} else {
-					http_response_code(304);
-					die("Error: " . mysqli_error($connection));
-				}
-			} else if ($post_Action == "UPDATE") {
-				$sql = "UPDATE `todo_Items` SET completed = NOT completed WHERE id = ".$post_ID;
-				if (mysqli_query($connection, $sql))
-				{
-					//http_response_code(201);
-					die("Successfully inserted.");
-				} else {
-					//http_response_code(304);
-					die("Error: " . mysqli_error($connection));
-				} 
-			} else {
-				http_response_code(405);
-				die("Method Not Authorized");
+				$sql = "INSERT INTO `todo_Items` (`owner`, `completed`, `description`) VALUES ('$owner_ID', '0', '$post_Data');";
+				$result = mysqli_query($connection, $sql) or die("Error: " . mysqli_error($connection));
 			}
 
-		} else {
-			http_response_code(401);
-			die("Failure: Invalid username/password");
 		}
-	} else {
-		die(json_encode('{"response":"failure","reason":"invalid post data"}'));
 	}
 ?>
