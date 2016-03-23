@@ -1,6 +1,6 @@
 function authenticate()
 {
-	if (userName == null)
+	if (userName == null || userName == "")
 	{
 		console.log("No users are logged in.  Redirecting to login.html");
 		window.location="login.html";

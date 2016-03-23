@@ -1,7 +1,7 @@
 // Test
 var url = "http://icarus.cs.weber.edu/~al53910/db.php";
-var userName = "TestOwner";
-var passWord = "7faa7303f769ce1d1f9c88bb669fbad62320c09eb131a47d78119842918853235f862caf9d9b2d6191cb03dad28609605c3f9298a8b81ab68674253e9e71d076";
+//var userName = "TestOwner";
+//var passWord = "7faa7303f769ce1d1f9c88bb669fbad62320c09eb131a47d78119842918853235f862caf9d9b2d6191cb03dad28609605c3f9298a8b81ab68674253e9e71d076";
 
 function getDB()
 {

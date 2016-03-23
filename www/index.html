@@ -5,10 +5,15 @@
 headerl {
 	font-size: 2.5em;
 }
-headerr {
+headerr1 {
 	font-size: 2.5em;
 	position: absolute;
 	right: 10px;
+}
+headerr2 {
+	font-size: 2.5em;
+	position: absolute;
+	right: 50px;
 }
 headerc, headern {
 	font-size: 1.4em;
@@ -23,7 +28,7 @@ a {
 </head>
 <body>
 
-<headerl>Todo List</headerl>&nbsp;for <headern id ="name"></headern>&nbsp;<headerc id ="count"></headerc>&nbsp;<headerr><a id="addLink" href="javascript:void(0)" onclick="addTodo();">&#x2710;</a></headerr>
+<headerl>Todo List</headerl>&nbsp;for <headern id ="name"></headern>&nbsp;<headerc id ="count"></headerc>&nbsp;<headerr2><a id="addLink" href="javascript:void(0)" onclick="addTodo();">&#x2710;</a></headerr2><headerr1><a id="addLink" href="login.html">&#x27B2;</a></headerr1>
 <hr/>
 <table id="todoTable">
 
@@ -34,9 +39,7 @@ a {
 <script type="text/javascript" charset="utf-8" src="js\db.js"></script>
 <script type="text/javascript" charset="utf-8" src="js\auth.js"></script>
 <script type="text/javascript" charset="utf-8">
-	
 	var userName = localStorage.getItem("username");
-	//var userName = "TestOwner"
 	authenticate();
     	getDB();
 	function clearTable()
