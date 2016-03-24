@@ -5,52 +5,66 @@
 <script src="js/phonegap.js"></script>
 <script src="js/sha512.js"></script>
 <style>
-hel {
-	font-size: 2.5em; /* 40px/16=2.5em */
-}
-her {
-	font-size: 2.5em; /* 40px/16=2.5em */
-	position: absolute;
-	right: 10px;
-}
 a {
   color: black;
   text-decoration: none; /* no underline */
 }
+form {
+    display: inline-block;
+    text-align: center;
+}
+.center {
+	width: 175px ;
+	margin-left: auto;
+	margin-right: auto;
+}
 </style>
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
 
 <script type="text/javascript">
-/* Clear username *'
+/* Clear username */
 window.localStorage.removeItem('username');
 function addUser()
 {
 	var dbusername = $("#username").val();
 	var dbpassword = $("#password").val();
-	var hashpassword = SHA512(dbpassword);
-	$.post( "http://icarus.cs.weber.edu/~al53910/userData.php",
+	if ((dbusername === "" || dbusername === null) && (dbpassword === "" || dbpassword === null))
 	{
-		username : dbusername,
-		password: hashpassword,
-		action: "add"
-	},
-	function( data, status) {
-		console.log("Status: " + data);
-		if (data == "Success")
+		alert("Please enter a username and password prior to clicking register");
+	} else {
+		var hashpassword = SHA512(dbpassword);
+		$.post( "http://icarus.cs.weber.edu/~al53910/userData.php",
 		{
-			localStorage.setItem("username", dbusername);
-			window.location.replace("index.html");
-		} else {
-			alert("An error occurred.  Please try again.");
-		}
-	});
+			username : dbusername,
+			password: hashpassword,
+			action: "add"
+		},
+		function( data, status) {
+			console.log("Status: " + data);
+			if (data == "Success")
+			{
+				localStorage.setItem("username", dbusername);
+				window.location.replace("index.html");
+			} else {
+				alert("An error occurred.  Please try again.");
+			}
+		});
+	}
 }
 </script>
 
 <title>Register</title>
 </head>
 <body>
-  Username: <input type="text" name="username" id="username"><br/><br/>
-  Password: <input type="text" name="password" id="password"><br/><br/>
-  <button onclick="addUser()" id="regBtn"> Register </button>
+	<div class="center">
+		<form>
+			<br /><br />
+			<label for="password">REGISTRATION</label><br /><hr /><br />
+			<label for="password">USERNAME</label><br /><input type="text" name="username" id="username"><br/><br/>
+			<label for="password">PASSWORD</label><br /><input type="password" name="password" id="password"><br/><br/>
+			<input type="button" id="RegisterButton" value="Register" onclick="addUser();" data-inline="true"/>
+			<input type="reset" value="Cancel" data-inline="true">
+		</form>
+	</div>
 </body>
 </html> 

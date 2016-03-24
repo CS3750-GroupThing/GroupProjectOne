@@ -7,8 +7,17 @@ a {
   color: black;
   text-decoration: none;
 }
+form {
+    display: inline-block;
+    text-align: center;
+}
+.center {
+	width: 175px ;
+	margin-left: auto;
+	margin-right: auto;
+}
 </style>
-
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
 <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
 <script src="js/phonegap.js"></script>
 <script src="js/sha512.js"></script>
@@ -20,39 +29,45 @@ function check()
 {	
 	var user = $("#username").val();
 	var pass = $("#password").val();
-	var hash = SHA512(pass);
-	console.log("Trying username: " + user + " & hash: " + hash);
-
-	$.post( "http://icarus.cs.weber.edu/~al53910/userData.php",
+	if ((user === "" || user === null) && (pass === "" || pass === null))
 	{
-		username : user,
-		password: hash,
-		action: "get"
-	},
-	function( data, status) {
-		console.log(data);
-		if(data == "Success")
+		alert("Please enter a username and password to login");
+	} else {
+		var hash = SHA512(pass);
+		console.log("Trying username: " + user + " & hash: " + hash);
+
+		$.post( "http://icarus.cs.weber.edu/~al53910/userData.php",
 		{
-			localStorage.setItem("username", user);
-			window.location.replace("index.html");
-		} else {
-			alert("Username or Password Incorrect");
-		}
-	});
+			username : user,
+			password: hash,
+			action: "get"
+		},
+		function( data, status) {
+			console.log(data);
+			if(data == "Success")
+			{
+				localStorage.setItem("username", user);
+				window.location.replace("index.html");
+			} else {
+				alert("Username or Password Incorrect");
+			}
+		});
+	}
 }
  </script>
 
 <title>Login</title>
 </head>
 <body>
-<form>
-  Username:&nbsp;&nbsp;<input type="text" name="username" id="username"><br/><br/>
-  Password:&nbsp;&nbsp;<input type="password" name="password" id="password"><br/><br/>
-  <input type="button" id="LoginButton" value="Login" onclick="check();"/>
-  <input type="reset" value="Cancel"/><br/><br/>
-</form>
-  <a href="reg.html">Create a new account</a>
-
-
+	<div class="center">
+		<form>
+			<label for="password">LOGIN</label><br /><hr /><br />
+			<label for="password">USERNAME</label><br /><input type="text" name="username" id="username"><br/><br/>
+			<label for="password">PASSWORD</label><br /><input type="password" name="password" id="password"><br/><br/>
+			<input type="button" id="LoginButton" value="Login" onclick="check();" data-inline="true"/>
+			<input type="reset" value="Cancel" data-inline="true"/><br/><br/>
+			<a href="reg.html">REGISTER</a>
+		</form>
+	</div>
 </body>
 </html> 
